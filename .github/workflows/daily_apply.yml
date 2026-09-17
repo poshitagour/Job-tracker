@@ -1,0 +1,12 @@
+name: Legacy Auto-Apply Bot (Disabled)
+
+# Deliberately disabled. The current project is configured as a job-discovery,
+# permit-aware tracker. Applications should be reviewed and submitted manually.
+on:
+  workflow_dispatch:
+
+jobs:
+  disabled:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Auto-apply is intentionally disabled. Use the Stamp 1G tracker and review jobs manually."

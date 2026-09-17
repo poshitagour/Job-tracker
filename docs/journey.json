@@ -1,0 +1,14 @@
+{
+  "goal": "Secure an Ireland HR / HR Technology role during Stamp 1G and transition to a suitable long-term employment permit.",
+  "stamp_1g_status": "ACTIVE - exact expiry date to confirm",
+  "milestones": [
+    {"id":"m1","name":"Stamp 1G active","status":"done"},
+    {"id":"m2","name":"Master CV aligned to HRIS / transformation","status":"done"},
+    {"id":"m3","name":"Start targeted Irish job search","status":"in_progress"},
+    {"id":"m4","name":"Build HRIS / People Analytics pipeline","status":"in_progress"},
+    {"id":"m5","name":"Secure HR / HR-tech offer","status":"pending"},
+    {"id":"m6","name":"Verify permit route before offer acceptance","status":"pending"},
+    {"id":"m7","name":"Employment permit application","status":"pending"},
+    {"id":"m8","name":"Long-term immigration permission","status":"pending"}
+  ]
+}

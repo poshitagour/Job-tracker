@@ -1,0 +1,64 @@
+name: Deploy GitHub Pages dashboard
+
+on:
+  # After the scraper finishes (success or failure) so the site always refreshes.
+  workflow_run:
+    workflows: ["Ireland HR Stamp 1G Job Tracker"]
+    types: [completed]
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'journey.json'
+      - 'seen_jobs.json'
+      - 'logs/applications.json'
+      - 'config/profile.py'
+      - 'scripts/sync_pages_data.py'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Sync tracker JSON into docs/
+        run: |
+          mkdir -p logs
+          test -f logs/applications.json || echo '[]' > logs/applications.json
+          python scripts/sync_pages_data.py
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,212 @@
+{
+  "name": "Poshita Gour",
+  "location": "Dublin, Ireland",
+  "visa_status": "Stamp 1G - full-time work authorisation in Ireland",
+  "stamp_1g_expiry": "CONFIRM EXACT DATE",
+  "requires_sponsorship_long_term": true,
+  "target_roles": [
+    "HRIS Analyst",
+    "HR Systems Analyst",
+    "HR Technology Analyst",
+    "People Systems Analyst",
+    "HR Data Analyst",
+    "People Analytics Analyst",
+    "Workforce Analytics Analyst",
+    "Workforce Planning Analyst",
+    "HR Transformation Analyst",
+    "HR Transformation Project Manager",
+    "HR Technology Project Manager",
+    "HRIS Project Manager",
+    "HR Systems Project Manager",
+    "Workforce Management Analyst",
+    "People Analytics Consultant",
+    "HR Technology Consultant",
+    "Workday Analyst",
+    "Workday Consultant",
+    "SAP SuccessFactors Analyst",
+    "Oracle HCM Analyst",
+    "UKG / Workforce Management Analyst",
+    "HR Generalist",
+    "HR Advisor",
+    "HR Operations Specialist",
+    "People Operations Specialist",
+    "Employee Relations Specialist",
+    "Learning & Development Specialist",
+    "HR Project Manager",
+    "HR Operations Manager",
+    "People Operations Manager"
+  ],
+  "salary_min": 40000,
+  "preferred_salary": "\u20ac42,000-\u20ac60,000+",
+  "cv_version": "Project Manager (HRIS) | HRIS & Workforce Transformation | WFM",
+  "permit_strategy": {
+    "csep_target": [
+      "IT Project and Programme Manager",
+      "IT Business Analyst",
+      "Systems/Business Analyst",
+      "other genuinely eligible Critical Skills occupations where duties match"
+    ],
+    "gep_target": [
+      "HR Generalist",
+      "HR Advisor",
+      "HR Operations",
+      "HR Specialist",
+      "HRIS roles not qualifying for CSEP"
+    ],
+    "avoid": [
+      "Human Resources Administrative Occupations (SOC 4138)"
+    ],
+    "current_mar": {
+      "gep": 36605,
+      "gep_recent_irish_graduate": 34009,
+      "csep_relevant_degree": 40909,
+      "csep_recent_graduate": 36849,
+      "csep_high_salary": 68911
+    }
+  },
+  "target_company_tiers": {
+    "A": "Large / high-tier employers - selective stretch applications",
+    "B": "Mid-market established / international employers - primary target",
+    "C": "Smaller established employers - secondary target, verify permit capability"
+  },
+  "searches": {
+    "indeed_ie": [
+      {
+        "keywords": "HRIS analyst",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "HR systems analyst",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "HR technology",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "people analytics",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "workforce analytics",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "HR transformation",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "HR project manager",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "HR operations specialist",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "HR generalist",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "HR advisor",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "HRIS analyst",
+        "location": "Ireland"
+      },
+      {
+        "keywords": "HR systems",
+        "location": "Ireland"
+      },
+      {
+        "keywords": "people analytics",
+        "location": "Ireland"
+      },
+      {
+        "keywords": "workforce management analyst",
+        "location": "Ireland"
+      },
+      {
+        "keywords": "HR transformation",
+        "location": "Ireland"
+      },
+      {
+        "keywords": "HR project manager",
+        "location": "Ireland"
+      },
+      {
+        "keywords": "HR technology",
+        "location": "Ireland"
+      },
+      {
+        "keywords": "HR operations",
+        "location": "Ireland"
+      }
+    ],
+    "irishjobs": [
+      {
+        "keywords": "HRIS analyst",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "HR systems analyst",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "HR technology",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "people analytics",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "workforce analytics",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "HR transformation",
+        "location": "Ireland"
+      },
+      {
+        "keywords": "HR project manager",
+        "location": "Ireland"
+      },
+      {
+        "keywords": "HR operations specialist",
+        "location": "Ireland"
+      },
+      {
+        "keywords": "HR generalist",
+        "location": "Dublin"
+      },
+      {
+        "keywords": "HR advisor",
+        "location": "Dublin"
+      }
+    ],
+    "linkedin_extra": [
+      {
+        "keywords": "People Systems Analyst",
+        "location": "Dublin, Ireland"
+      },
+      {
+        "keywords": "HR Data Analyst",
+        "location": "Dublin, Ireland"
+      },
+      {
+        "keywords": "Workforce Planning Analyst",
+        "location": "Dublin, Ireland"
+      },
+      {
+        "keywords": "HR Technology Project Manager",
+        "location": "Ireland"
+      },
+      {
+        "keywords": "HRIS Project Manager",
+        "location": "Ireland"
+      }
+    ]
+  }
+}

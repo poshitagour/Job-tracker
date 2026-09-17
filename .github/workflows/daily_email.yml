@@ -1,0 +1,36 @@
+name: Daily Gmail digest
+
+on:
+  # Weekday mornings — 07:30 UTC (after the 07:00 scraper cron).
+  schedule:
+    - cron: '30 7 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Ensure applications log exists
+        run: |
+          mkdir -p logs
+          test -f logs/applications.json || echo '[]' > logs/applications.json
+
+      - name: Send Gmail digest
+        env:
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PAGES_URL: ${{ vars.PAGES_URL }}
+        run: python scripts/send_daily_digest.py

@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poshita Gour - Stamp 1G Job Tracker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #09090c;
+    --surface: #0f0f13;
+    --border: #1c1c26;
+    --border2: #252530;
+    --text: #e0e0e8;
+    --muted: #6b6b80;
+    --dim: #3a3a48;
+    --green: #3dd68c;
+    --green-bg: #0d2018;
+    --blue: #5a9cf5;
+    --blue-bg: #0a1628;
+    --amber: #f5b942;
+    --amber-bg: #1e1508;
+    --red: #f56060;
+    --red-bg: #1e0808;
+    --purple: #a57cf5;
+    --purple-bg: #130d28;
+    --cyan: #42c8e0;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --font-sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    font-size: 13px;
+  }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-left h1 {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 700;
+    color: #f0f0f8;
+    letter-spacing: -0.3px;
+  }
+  .header-left .subtitle {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .live-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+  .live-dot.offline { background: var(--red); animation: none; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .stats-bar {
+    display: flex;
+    gap: 2px;
+    padding: 12px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .stat-card {
+    flex: 1;
+    min-width: 90px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: var(--bg);
+    text-align: center;
+  }
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  .filters {
+    display: flex;
+    gap: 8px;
+    padding: 12px 24px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn.active { border-color: var(--blue); color: var(--blue); background: var(--blue-bg); }
+  .search-box {
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    outline: none;
+    width: 200px;
+  }
+  .refresh-info {
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--dim);
+    font-family: var(--font-mono);
+  }
+
+  .table-wrap {
+    padding: 0 24px 24px;
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  th {
+    text-align: left;
+    padding: 8px 12px;
+    color: var(--muted);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  th:hover { color: var(--text); }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    max-width: 300px;
+  }
+  tr:hover td { background: #0f0f1a; }
+  tr.new-entry td { animation: flash 2s ease; }
+  @keyframes flash {
+    0% { background: #1a2a1a; }
+    100% { background: transparent; }
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .badge-applied      { background: #0d2018; color: var(--green); border: 1px solid #1a3d28; }
+  .badge-interview    { background: #1a1208; color: var(--amber); border: 1px solid #3d2d10; }
+  .badge-offer        { background: #0a1e0a; color: #7de87d; border: 1px solid #1a441a; }
+  .badge-skipped      { background: #141418; color: var(--dim); border: 1px solid #2a2a30; }
+  .badge-failed       { background: var(--red-bg); color: var(--red); border: 1px solid #3d1010; }
+  .badge-dry_run      { background: #100a28; color: var(--purple); border: 1px solid #2a1850; }
+  .badge-manual_needed{ background: #0a1628; color: var(--blue); border: 1px solid #1a3060; }
+
+  .score {
+    display: inline-block;
+    width: 28px;
+    text-align: center;
+    padding: 2px 0;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 11px;
+  }
+  .score-high { background: var(--green-bg); color: var(--green); }
+  .score-mid  { background: var(--amber-bg); color: var(--amber); }
+  .score-low  { background: var(--red-bg); color: var(--red); }
+
+  .company-cell { font-weight: 600; color: #d0d0e8; }
+  .title-cell   { color: var(--text); }
+  .reason-cell  { color: var(--muted); font-size: 10px; max-width: 200px;
+                  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .link-cell a  { color: var(--blue); text-decoration: none; font-size: 10px; }
+  .link-cell a:hover { text-decoration: underline; }
+  .time-cell    { color: var(--dim); font-size: 10px; white-space: nowrap; }
+  .platform-cell { color: var(--muted); font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+
+  .status-select {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .manual-panel {
+    margin: 12px 24px;
+    background: var(--blue-bg);
+    border: 1px solid #1a3060;
+    border-radius: 8px;
+    padding: 14px 18px;
+  }
+  .manual-panel h3 {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+  }
+  .manual-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #1a3060;
+    gap: 12px;
+  }
+  .manual-item:last-child { border: none; }
+  .manual-item a {
+    color: var(--blue);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .manual-item a:hover { text-decoration: underline; }
+  .manual-note { font-size: 10px; color: var(--muted); font-family: var(--font-mono); }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--dim);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .empty-state .big { font-size: 36px; margin-bottom: 12px; }
+
+  .irish-panel {
+    margin: 12px 24px;
+    background: #0a1e10;
+    border: 1px solid #1a4028;
+    border-radius: 8px;
+    padding: 14px 18px;
+  }
+  .irish-panel h3 {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+  }
+  .search-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+  .search-tag {
+    background: #0d2018;
+    border: 1px solid #1a3d28;
+    color: var(--green);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .search-source-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 6px 0 3px;
+  }
+
+  .irish-stats {
+    display: flex;
+    gap: 2px;
+    padding: 8px 24px;
+    background: #0a1e10;
+    border-bottom: 1px solid #1a4028;
+    overflow-x: auto;
+  }
+  .irish-stat-card {
+    flex: 1;
+    min-width: 100px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #1a3d28;
+    background: var(--bg);
+    text-align: center;
+  }
+  .cv-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .cv-a { background: #100a28; color: var(--purple); border: 1px solid #2a1850; }
+  .cv-b { background: #0d2018; color: var(--green);  border: 1px solid #1a3d28; }
+  .cv-m { background: var(--amber-bg); color: var(--amber); border: 1px solid #3d2d10; }
+  .flag-badge {
+    display: inline-block;
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-left: 3px;
+    background: #1a1208;
+    border: 1px solid #3d2d10;
+    color: var(--amber);
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--green-bg);
+    border: 1px solid var(--green);
+    color: var(--green);
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>Stamp 1G Job Tracker</h1>
+    <div class="subtitle">Poshita Gour - Dublin | HRIS • HR Transformation • People Analytics</div>
+  </div>
+  <div class="live-indicator">
+    <div class="live-dot" id="liveIndicator"></div>
+    <span id="liveText">Connecting...</span>
+  </div>
+</header>
+
+<div class="stats-bar" id="statsBar"></div>
+<div id="journeyPanel" style="margin:12px 24px;background:#0f0f13;border:1px solid #252530;border-radius:8px;padding:16px;">
+  <div style="font-family:var(--font-mono);font-size:11px;color:var(--cyan);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;">Stamp 1G Journey</div>
+  <div id="profileSummary" style="color:var(--muted);font-size:11px;line-height:1.7;margin-bottom:12px;">Loading profile...</div>
+  <div id="milestones" style="display:flex;gap:7px;flex-wrap:wrap;"></div>
+</div>
+
+<div id="strategyPanel" style="margin:12px 24px;background:#0a1628;border:1px solid #1a3060;border-radius:8px;padding:16px;">
+  <div style="font-family:var(--font-mono);font-size:11px;color:var(--blue);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">Permit-aware targeting</div>
+  <div id="strategyText" style="font-size:11px;color:var(--muted);line-height:1.7;">Loading strategy...</div>
+</div>
+
+
+<div class="irish-panel" id="irishSearchPanel" style="display:none">
+  <h3>Irish Niche Searches - Active Configs</h3>
+  <div class="search-source-label">Indeed IE</div>
+  <div class="search-tags" id="indeedIETags"></div>
+  <div class="search-source-label">IrishJobs.ie</div>
+  <div class="search-tags" id="irishJobsTags"></div>
+  <div class="search-source-label">LinkedIn (extra)</div>
+  <div class="search-tags" id="linkedinExtraTags"></div>
+</div>
+
+<div class="irish-stats" id="irishStatsBar" style="display:none"></div>
+
+<div id="irishJobsSection" style="display:none; padding: 0 24px 8px;">
+  <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;padding:8px 0 4px;">
+    Last 50 Irish Niche Jobs - Fit Scores & CV Recommendations
+  </div>
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Source</th>
+          <th>Company</th>
+          <th>Role</th>
+          <th>Score</th>
+          <th>CV</th>
+          <th>Permit</th>
+          <th>Flags</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody id="irishTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="manual-panel" id="manualPanel" style="display:none">
+  <h3>Manual Apply Needed - High Priority</h3>
+  <div id="manualList"></div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+  <button class="filter-btn" onclick="setFilter('applied', this)">Applied</button>
+  <button class="filter-btn" onclick="setFilter('manual_needed', this)">Manual Needed</button>
+  <button class="filter-btn" onclick="setFilter('interview', this)">Interview</button>
+  <button class="filter-btn" onclick="setFilter('offer', this)">Offer</button>
+  <button class="filter-btn" onclick="setFilter('dry_run', this)">Dry Run</button>
+  <button class="filter-btn" onclick="setFilter('skipped', this)">Skipped</button>
+  <input class="search-box" id="searchBox" placeholder="Search company or role..." oninput="renderTable()">
+  <div class="refresh-info" id="refreshInfo">Refreshing every 10s</div>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th onclick="sortBy('timestamp')">Time</th>
+        <th onclick="sortBy('platform')">Platform</th>
+        <th onclick="sortBy('company')">Company</th>
+        <th>Role</th>
+        <th onclick="sortBy('ai_score')">Score</th>
+        <th>Status</th>
+        <th>AI Reason</th>
+        <th>Link</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <div class="empty-state" id="emptyState" style="display:none">
+    <div class="big">Robot</div>
+    Bot not started yet - or no jobs match this filter.
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:8000';
+let allApps = [];
+let currentFilter = 'all';
+let sortKey = 'timestamp';
+let sortDir = -1;
+let knownCount = 0;
+let isOnline = false;
+
+const STATUS_OPTIONS = ['applied','manual_needed','interview','offer','skipped','failed','dry_run','rejected'];
+
+async function fetchProfileAndJourney() {
+  try {
+    const [pr, jr] = await Promise.all([fetch(`${API}/api/profile`), fetch(`${API}/api/journey`)]);
+    const p = await pr.json(); const j = await jr.json();
+    document.getElementById('profileSummary').innerHTML =
+      `<b style="color:#e0e0e8">${p.name}</b> · ${p.location} · <b style="color:#3dd68c">${p.visa_status}</b> · ` +
+      `1G expiry: <b style="color:#f5b942">${p.stamp_1g_expiry}</b><br>` +
+      `Target salary: ${p.preferred_salary} · Long-term permit required: ${p.requires_sponsorship_long_term ? 'Yes' : 'No'} · CV: ${p.cv_version}`;
+    document.getElementById('milestones').innerHTML = j.milestones.map(m => {
+      const bg = m.status==='done' ? '#0d2018' : m.status==='in_progress' ? '#0a1628' : '#141418';
+      const fg = m.status==='done' ? '#3dd68c' : m.status==='in_progress' ? '#5a9cf5' : '#6b6b80';
+      return `<button onclick="cycleMilestone('${m.id}','${m.status}')" title="Click to cycle status" style="background:${bg};color:${fg};border:1px solid ${fg};padding:6px 9px;border-radius:4px;font-family:var(--font-mono);font-size:9px;cursor:pointer">${m.status==='done'?'✓ ':m.status==='in_progress'?'→ ':'○ '}${m.name}</button>`;
+    }).join('');
+    const ps = p.permit_strategy || {};
+    document.getElementById('strategyText').innerHTML =
+      `<b style="color:#e0e0e8">Primary:</b> HRIS / HR Technology / HR Transformation / People Analytics · ` +
+      `<b style="color:#e0e0e8">CSEP signals:</b> ${ps.csep_target.join(', ')} · ` +
+      `<b style="color:#e0e0e8">GEP signals:</b> ${ps.gep_target.join(', ')} · ` +
+      `<b style="color:#f56060">Avoid:</b> ${ps.avoid.join(', ')}`;
+  } catch(e) { document.getElementById('profileSummary').textContent='Could not load profile/strategy'; }
+}
+
+async function cycleMilestone(id, current) {
+  const next = current==='pending' ? 'in_progress' : current==='in_progress' ? 'done' : 'pending';
+  await fetch(`${API}/api/journey/milestone`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,status:next})});
+  fetchProfileAndJourney();
+}
+
+async function fetchData() {
+  try {
+    const res = await fetch(`${API}/api/applications`);
+    if (!res.ok) throw new Error('Server error');
+    const data = await res.json();
+    
+    const prevCount = allApps.length;
+    allApps = data.applications || [];
+    
+    if (allApps.length > prevCount && prevCount > 0) {
+      const diff = allApps.length - prevCount;
+      showToast(`${diff} new application${diff > 1 ? 's' : ''} logged!`);
+    }
+
+    renderStats(data.stats || {});
+    renderTable();
+    renderManualPanel();
+    setOnline(true);
+    document.getElementById('refreshInfo').textContent = `Last refresh: ${new Date().toLocaleTimeString()}`;
+  } catch (e) {
+    setOnline(false);
+  }
+}
+
+function setOnline(on) {
+  isOnline = on;
+  const dot = document.getElementById('liveIndicator');
+  const text = document.getElementById('liveText');
+  dot.className = 'live-dot' + (on ? '' : ' offline');
+  text.textContent = on ? 'Live' : 'Server offline - start dashboard/server.py';
+}
+
+function renderStats(stats) {
+  const statConfig = [
+    { key: 'total',          label: 'Total',          color: '#888' },
+    { key: 'today',          label: 'Today',          color: '#a0c0ff' },
+    { key: 'applied',        label: 'Applied',        color: '#3dd68c' },
+    { key: 'manual_needed',  label: 'Manual Needed',  color: '#5a9cf5' },
+    { key: 'interview',      label: 'Interview',      color: '#f5b942' },
+    { key: 'offer',          label: 'Offer',          color: '#7de87d' },
+    { key: 'skipped',        label: 'Skipped',        color: '#444' },
+    { key: 'failed',         label: 'Failed',         color: '#f56060' },
+  ];
+  document.getElementById('statsBar').innerHTML = statConfig.map(s =>
+    `<div class="stat-card">
+      <div class="stat-value" style="color:${s.color}">${stats[s.key] ?? 0}</div>
+      <div class="stat-label">${s.label}</div>
+    </div>`
+  ).join('');
+}
+
+function renderTable() {
+  const search = document.getElementById('searchBox').value.toLowerCase();
+  let apps = allApps.filter(a => {
+    const matchFilter = currentFilter === 'all' || a.status === currentFilter;
+    const matchSearch = !search || 
+      (a.company||'').toLowerCase().includes(search) ||
+      (a.job_title||'').toLowerCase().includes(search) ||
+      (a.platform||'').toLowerCase().includes(search);
+    return matchFilter && matchSearch;
+  });
+
+  apps = apps.sort((a, b) => {
+    let av = a[sortKey] ?? '', bv = b[sortKey] ?? '';
+    if (sortKey === 'ai_score') { av = Number(av); bv = Number(bv); }
+    return av < bv ? sortDir : av > bv ? -sortDir : 0;
+  });
+
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+
+  if (!apps.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = apps.map((a, i) => {
+    const score = Number(a.ai_score || 0);
+    const scoreClass = score >= 8 ? 'score-high' : score >= 6 ? 'score-mid' : 'score-low';
+    const time = (a.timestamp||'').slice(11,16);
+    const date = (a.timestamp||'').slice(0,10);
+    const isToday = date === new Date().toISOString().slice(0,10);
+    const timeStr = isToday ? `Today ${time}` : `${date} ${time}`;
+    const isNew = i < 3 && allApps.length !== knownCount;
+
+    return `<tr class="${isNew ? 'new-entry' : ''}">
+      <td class="time-cell">${timeStr}</td>
+      <td class="platform-cell">${a.platform||''}</td>
+      <td class="company-cell">${a.company||''}</td>
+      <td class="title-cell">${a.job_title||''}</td>
+      <td><span class="score ${scoreClass}">${score}</span></td>
+      <td>
+        <select class="status-select" onchange="updateStatus('${a.job_url}', this.value)">
+          ${STATUS_OPTIONS.map(s => `<option value="${s}" ${a.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td class="reason-cell" title="${a.ai_reason||''}">${(a.ai_reason||'').slice(0,60)}</td>
+      <td class="link-cell">${a.job_url ? `<a href="${a.job_url}" target="_blank">Open</a>` : ''}</td>
+    </tr>`;
+  }).join('');
+
+  knownCount = allApps.length;
+}
+
+function renderManualPanel() {
+  const manuals = allApps.filter(a => a.status === 'manual_needed');
+  const panel = document.getElementById('manualPanel');
+  const list = document.getElementById('manualList');
+
+  if (!manuals.length) { panel.style.display = 'none'; return; }
+
+  panel.style.display = 'block';
+  list.innerHTML = manuals.slice(0, 8).map(a =>
+    `<div class="manual-item">
+      <div>
+        <a href="${a.job_url}" target="_blank">${a.company} - ${a.job_title}</a>
+        <div class="manual-note">${a.notes || ''} Score: ${a.ai_score}/10</div>
+      </div>
+      <button onclick="updateStatus('${a.job_url}', 'applied')" style="background:#0d2018;border:1px solid #3dd68c;color:#3dd68c;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:10px;font-family:var(--font-mono)">Mark Applied</button>
+    </div>`
+  ).join('');
+}
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function sortBy(key) {
+  if (sortKey === key) sortDir = -sortDir;
+  else { sortKey = key; sortDir = -1; }
+  renderTable();
+}
+
+async function updateStatus(jobUrl, newStatus) {
+  try {
+    await fetch(`${API}/api/update-status`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_url: jobUrl, status: newStatus })
+    });
+    await fetchData();
+    showToast('Status updated');
+  } catch (e) {
+    showToast('Could not update - server offline?');
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+async function fetchIrishSearches() {
+  try {
+    const res = await fetch(`${API}/api/irish-searches`);
+    if (!res.ok) return;
+    const data = await res.json();
+    renderSearchTags('indeedIETags',     data.indeed_ie    || []);
+    renderSearchTags('irishJobsTags',    data.irishjobs    || []);
+    renderSearchTags('linkedinExtraTags', data.linkedin_extra || []);
+    document.getElementById('irishSearchPanel').style.display = 'block';
+  } catch (e) {}
+}
+
+function renderSearchTags(elId, searches) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.innerHTML = searches.map(s =>
+    `<span class="search-tag">${s.keywords} - ${s.location}</span>`
+  ).join('');
+}
+
+async function fetchIrishJobs() {
+  try {
+    const res = await fetch(`${API}/api/jobs-table`);
+    if (!res.ok) return;
+    const data = await res.json();
+    renderIrishStats(data.stats || {});
+    renderIrishTable(data.jobs || []);
+    if ((data.jobs || []).length > 0) {
+      document.getElementById('irishJobsSection').style.display = 'block';
+      document.getElementById('irishStatsBar').style.display = 'flex';
+    }
+  } catch (e) {}
+}
+
+function renderIrishStats(stats) {
+  const bar = document.getElementById('irishStatsBar');
+  bar.innerHTML = [
+    { label: 'Jobs Found (7d)', value: stats.weekly_found ?? 0,       color: '#3dd68c' },
+    { label: 'Alerts Sent',     value: stats.alerts_sent ?? 0,        color: '#5a9cf5' },
+    { label: 'Dupes Skipped',   value: stats.duplicates_skipped ?? 0, color: '#f5b942' },
+    { label: 'Total Seen',      value: stats.total_seen ?? 0,         color: '#888'    },
+  ].map(s =>
+    `<div class="irish-stat-card">
+      <div class="stat-value" style="color:${s.color};font-size:20px">${s.value}</div>
+      <div class="stat-label">${s.label}</div>
+    </div>`
+  ).join('');
+}
+
+function renderIrishTable(jobs) {
+  const tbody = document.getElementById('irishTableBody');
+  if (!jobs.length) { tbody.innerHTML = ''; return; }
+  tbody.innerHTML = jobs.map(j => {
+    const score = Number(j.fit_score || 0);
+    const scoreClass = score >= 75 ? 'score-high' : score >= 55 ? 'score-mid' : 'score-low';
+    const cvClass = j.cv_rec.includes('CV-A') && !j.cv_rec.includes('CV-B') ? 'cv-a'
+                  : j.cv_rec.includes('CV-B') && !j.cv_rec.includes('CV-A') ? 'cv-b' : 'cv-m';
+    const cvShort = j.cv_rec.replace('CV-A: Backend/AI Engineer','CV-A')
+                             .replace('CV-B: Data Analytics','CV-B')
+                             .replace('CV-A or CV-B - check manually','Manual');
+    const permitShort = (j.permit_path || 'Manual review').replace('CSEP CANDIDATE - verify SOC/duties','CSEP candidate').replace('GEP CANDIDATE - check LMNT/occupation','GEP candidate').replace('AVOID - HR administrative occupation signal','AVOID');
+    const flagsHtml = (j.flags || []).map(f =>
+      `<span class="flag-badge">${f}</span>`
+    ).join('');
+    const time = (j.timestamp || '').slice(0,16).replace('T',' ');
+    return `<tr>
+      <td class="time-cell">${time}</td>
+      <td class="platform-cell">${j.platform}</td>
+      <td class="company-cell">${j.company}</td>
+      <td class="title-cell">${j.job_title}</td>
+      <td><span class="score ${scoreClass}">${score}</span></td>
+      <td><span class="cv-badge ${cvClass}">${cvShort}</span></td>
+      <td><span class="flag-badge">${permitShort}</span></td>
+      <td>${flagsHtml}</td>
+      <td class="link-cell">${j.job_url ? `<a href="${j.job_url}" target="_blank">Open</a>` : ''}</td>
+    </tr>`;
+  }).join('');
+}
+
+fetchProfileAndJourney();
+fetchData();
+fetchIrishSearches();
+fetchIrishJobs();
+setInterval(fetchData, 10000);
+setInterval(fetchIrishJobs, 30000);
+</script>
+</body>
+</html>

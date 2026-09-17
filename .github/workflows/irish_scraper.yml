@@ -1,0 +1,84 @@
+name: Ireland HR Stamp 1G Job Tracker
+
+on:
+  # Run every weekday morning so the pipeline catches fresh HR / HR-tech roles.
+  # 07:00 UTC is 08:00 Irish summer time and 07:00 Irish winter time.
+  schedule:
+    - cron: '0 7 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Irish platform to scrape'
+        required: true
+        default: 'indeed_ie'
+        type: choice
+        options:
+          - indeed_ie
+          - irishjobs
+      dry_run:
+        description: 'Dry run (no Telegram alerts)'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install chromium
+          python -m playwright install-deps chromium
+
+      - name: Run HR / HR-tech tracker
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            PLATFORM="${{ github.event.inputs.platform }}"
+            DRY=""
+            if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then DRY="--dry-run"; fi
+            python main.py --platform "$PLATFORM" $DRY --headless
+          else
+            python main.py --platform indeed_ie --headless
+            python main.py --platform irishjobs --headless
+          fi
+
+      - name: Commit tracker logs and deduplication state
+        if: always()
+        run: |
+          git config user.email "workwithposhita@gmail.com"
+          git config user.name "Poshita Gour"
+          mkdir -p logs
+          test -f logs/applications.json || echo '[]' > logs/applications.json
+          git add -f seen_jobs.json journey.json logs/applications.json || true
+          if git diff --staged --quiet; then
+            echo "No tracker changes to commit."
+          else
+            git commit -m "chore: update Ireland HR job tracker"
+            git push
+          fi
+
+      - name: Upload tracker logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ireland-hr-tracker-${{ github.run_number }}
+          path: logs/
+          retention-days: 30
