@@ -160,9 +160,16 @@ def build_text(journey: dict, apps: list, seen: dict, pages_url: str) -> str:
 
 
 def send_email(subject: str, text: str, html: str) -> None:
-    user = os.environ["GMAIL_ADDRESS"]
-    password = os.environ["GMAIL_APP_PASSWORD"]
-    to_addr = os.environ.get("EMAIL_TO") or user
+    # App passwords are often copied with spaces; SMTP needs the 16 chars only.
+    user = os.environ["GMAIL_ADDRESS"].strip()
+    password = "".join(os.environ["GMAIL_APP_PASSWORD"].split())
+    to_addr = (os.environ.get("EMAIL_TO") or user).strip()
+
+    if len(password) != 16:
+        raise SystemExit(
+            f"GMAIL_APP_PASSWORD should be 16 characters after removing spaces "
+            f"(got {len(password)}). Create one at https://myaccount.google.com/apppasswords"
+        )
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
