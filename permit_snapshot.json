@@ -1,0 +1,20 @@
+{
+  "checked_date": "2026-09-17",
+  "note": "Permit labels in this project are triage signals, not legal determinations. Verify the live DETE rules and actual SOC/duties before relying on a permit route.",
+  "2026_mar": {
+    "gep": 36605,
+    "gep_recent_irish_graduate": 34009,
+    "csep_relevant_degree": 40909,
+    "csep_recent_graduate": 36849,
+    "csep_high_salary": 68911
+  },
+  "important_hr_rule": "Human resources administrative occupations (SOC 4138) are on the Ineligible Occupations List effective 13 May 2026.",
+  "csep_note": "CSEP eligibility depends on the actual occupation, duties, qualifications, remuneration and a qualifying 2-year job offer; job title alone is not sufficient.",
+  "official_sources": [
+    "https://enterprise.gov.ie/en/what-we-do/workplace-and-skills/employment-permits/employment-permit-eligibility/ineligible-categories-of-employment/ineligible%20list%20of%20occupations%20.html",
+    "https://enterprise.gov.ie/en/what-we-do/workplace-and-skills/employment-permits/employment-permit-eligibility/highly-skilled-eligible-occupations-list/critical%20skills%20occupations%20list.html",
+    "https://enterprise.gov.ie/en/what-we-do/workplace-and-skills/economic-migration-policy/minimum-annual-remuneration/",
+    "https://enterprise.gov.ie/en/what-we-do/workplace-and-skills/employment-permits/permit-types/critical-skills-employment-permit/",
+    "https://enterprise.gov.ie/en/what-we-do/workplace-and-skills/employment-permits/permit-types/general-employment-permit/"
+  ]
+}

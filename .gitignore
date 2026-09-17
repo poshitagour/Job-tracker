@@ -1,0 +1,8 @@
+.env
+browser_session/
+logs/
+output/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
